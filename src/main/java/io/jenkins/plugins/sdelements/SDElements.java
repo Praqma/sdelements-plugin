@@ -53,6 +53,7 @@ public class SDElements extends Recorder implements SimpleBuildStep {
         taskListener.getLogger().println("Doing SDElements integration");
         SDElements.DescriptorImpl imp = (SDElements.DescriptorImpl)Jenkins.getInstance().getDescriptor(SDElements.class);
         taskListener.getLogger().println("With credentials id: "+imp.getByName(connectionName).getCredentialsId());
+        run.addAction(new SDElementsRiskIndicatorBuildAction(run, true));
     }
 
     @Override
