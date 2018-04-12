@@ -1,1 +1,12 @@
 <?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+    <f:entry field="connectionName" title="Connection name">
+        <f:textbox/>
+    </f:entry>
+    <f:entry field="connectionString" title="Server address">
+        <f:textbox/>
+    </f:entry>
+    <f:entry field="credentialsId" title="Credentials to use">
+        <c:select/>
+    </f:entry>
+</j:jelly>
