@@ -1,4 +1,9 @@
-# sdelements-plugin
-Temporary repo for new Jenkins plugin for SD Elements security analysis tool.
+# Jenkins SD Elements plugin
 
-We will rename the repo and make it public if we start developing the plugin - for it is only used for some planning using issues.
+Jenkins integration for [SD Elements risk assessment](https://www.securitycompass.com/sdelements) by [Security Compass](https://www.securitycompass.com/).
+
+Add a post-build action to pass/fail your job, based on the status of the risk assessment.
+
+Development is in progress - no public release yet.
+
+Developed by Praqma, funded by Security Compass
