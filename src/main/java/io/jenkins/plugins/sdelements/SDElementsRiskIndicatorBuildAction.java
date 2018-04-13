@@ -1,7 +1,7 @@
 package io.jenkins.plugins.sdelements;
 
 import hudson.model.Action;
-import hudson.model.Run;
+import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 import jenkins.tasks.SimpleBuildStep;
 
 import java.util.ArrayList;
@@ -13,14 +13,12 @@ import java.util.List;
  */
 public class SDElementsRiskIndicatorBuildAction implements Action, SimpleBuildStep.LastBuildAction {
 
-    private transient Run<?,?> build;
-    private boolean riskIndicator;
+    private RiskPolicyCompliance riskIndicator;
     private List<SDElementsRiskIndicatorProjectAction> projectActions;
 
-    public SDElementsRiskIndicatorBuildAction(Run<?,?> build, boolean riskIndicator) {
-        this.build = build;
+    public SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance riskIndicator) {
         List<SDElementsRiskIndicatorProjectAction> actions = new ArrayList<>();
-        actions.add(new SDElementsRiskIndicatorProjectAction(build.getParent(), riskIndicator));
+        actions.add(new SDElementsRiskIndicatorProjectAction(riskIndicator));
         this.projectActions = actions;
         this.riskIndicator = riskIndicator;
     }
@@ -32,12 +30,15 @@ public class SDElementsRiskIndicatorBuildAction implements Action, SimpleBuildSt
 
     @Override
     public String getIconFileName() {
-        return null;
+        if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
+            return "/plugin/sdelements/icons/none.png";
+        }
+        return riskIndicator == RiskPolicyCompliance.PASS ? "/plugin/sdelements/icons/pass.png" : "/plugin/sdelements/icons/fail.png";
     }
 
     @Override
     public String getDisplayName() {
-        return null;
+        return "SDElements";
     }
 
     @Override
@@ -45,11 +46,11 @@ public class SDElementsRiskIndicatorBuildAction implements Action, SimpleBuildSt
         return null;
     }
 
-    public boolean isRiskIndicator() {
+    public RiskPolicyCompliance getRiskIndicator() {
         return riskIndicator;
     }
 
-    public void setRiskIndicator(boolean riskIndicator) {
+    public void setRiskIndicator(RiskPolicyCompliance riskIndicator) {
         this.riskIndicator = riskIndicator;
     }
 }

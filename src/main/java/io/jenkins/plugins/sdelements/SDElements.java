@@ -1,10 +1,12 @@
 package io.jenkins.plugins.sdelements;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.domains.DomainRequirement;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -12,10 +14,14 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ListBoxModel;
+import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
+import io.jenkins.plugins.sdelements.api.SDElementsLibrary;
+import io.jenkins.plugins.sdelements.api.SDLibraryException;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -23,7 +29,9 @@ import org.kohsuke.stapler.StaplerRequest;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,10 +58,39 @@ public class SDElements extends Recorder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
-        taskListener.getLogger().println("Doing SDElements integration");
-        SDElements.DescriptorImpl imp = (SDElements.DescriptorImpl)Jenkins.getInstance().getDescriptor(SDElements.class);
-        taskListener.getLogger().println("With credentials id: "+imp.getByName(connectionName).getCredentialsId());
-        run.addAction(new SDElementsRiskIndicatorBuildAction(run, true));
+        SDElements.DescriptorImpl imp = null;
+        if(Jenkins.getInstance() != null) {
+            imp = (SDElements.DescriptorImpl)Jenkins.getInstance().getDescriptorOrDie(SDElements.class);
+        }
+        SDElementsConnection conn = null;
+        if(imp != null) {
+            conn = imp.getByName(connectionName);
+        }
+        RiskPolicyCompliance riskIndicator = RiskPolicyCompliance.UNDETERMINED;
+        if(conn != null) {
+            String credId = conn.getCredentialsId();
+            StringCredentials cred = CredentialsProvider.findCredentialById(credId, StringCredentials.class, run, Collections.<DomainRequirement>emptyList());
+            if(cred != null) {
+                SDElementsLibrary lib = new SDElementsLibrary(cred.getSecret().getPlainText(), conn.getConnectionString());
+                try {
+                    riskIndicator = lib.getProjectCompliance(projectId);
+                } catch (UnirestException e) {
+                    taskListener.getLogger().println("Fatal unrecoverable error while getting results from SDElements");
+                    if (e.getCause() != null && e.getCause() instanceof UnknownHostException) {
+                        taskListener.getLogger().println("The host " + conn.getConnectionString() + "could not be found");
+                        taskListener.getLogger().println(e.getMessage());
+                    } else {
+                        e.printStackTrace(taskListener.getLogger());
+                    }
+                } catch (SDLibraryException ex) {
+                    taskListener.getLogger().println(ex.getMessage());
+                }
+            }
+        } else {
+            run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
+            throw new IllegalStateException("Improper connection selected. This is a required setting");
+        }
+        run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
     }
 
     @Override

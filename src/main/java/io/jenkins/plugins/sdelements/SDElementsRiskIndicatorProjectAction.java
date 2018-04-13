@@ -1,29 +1,33 @@
 package io.jenkins.plugins.sdelements;
 
-import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
+import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 
 /**
  * Created by mads on 4/12/18.
  */
 public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAction {
 
-    private transient Job<?,?> job;
-    private boolean riskIndicator;
+    private RiskPolicyCompliance riskIndicator;
 
-    public SDElementsRiskIndicatorProjectAction(Job<?,?> job, boolean riskIndicator) {
-        this.job = job;
+    public SDElementsRiskIndicatorProjectAction(RiskPolicyCompliance riskIndicator) {
         this.riskIndicator = riskIndicator;
     }
 
     @Override
     public String getIconFileName() {
-        return riskIndicator ? "/plugin/sdelements/icons/pass.png" : "/plugin/sdelements/icons/fail.png";
+        if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
+            return "/plugin/sdelements/icons/none.png";
+        }
+        return riskIndicator == RiskPolicyCompliance.PASS ? "/plugin/sdelements/icons/pass.png" : "/plugin/sdelements/icons/fail.png";
     }
 
     @Override
     public String getDisplayName() {
-        return "SDElements: "+(riskIndicator ? "PASS" : "FAIL");
+        if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
+            return "SDElements: Not determined";
+        }
+        return "SDElements: "+(riskIndicator == RiskPolicyCompliance.PASS ? "PASS" : "FAIL");
     }
 
     @Override
@@ -31,11 +35,11 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
         return null;
     }
 
-    public boolean isRiskIndicator() {
+    public RiskPolicyCompliance getRiskIndicator() {
         return riskIndicator;
     }
 
-    public void setRiskIndicator(boolean riskIndicator) {
+    public void setRiskIndicator(RiskPolicyCompliance riskIndicator) {
         this.riskIndicator = riskIndicator;
     }
 }
