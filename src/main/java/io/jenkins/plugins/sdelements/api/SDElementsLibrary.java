@@ -4,29 +4,29 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class SDElementsLibrary {
 
-    private String accessKey;
-    private String url;
+    private final String accessKey;
+    private final String url;
     private String apiVersion = "v2";
 
     public SDElementsLibrary(String accessKey, String url) {
-        this.accessKey = accessKey;
-        this.url = url;
+        this.accessKey = Objects.requireNonNull(accessKey, "accessKey must not be null");
+        this.url = Objects.requireNonNull(url, "url must not be null");
     }
 
     private HttpResponse<JsonNode> getProject(int id) throws UnirestException {
-        String projects = url + "/api/" + apiVersion + "/projects/";
+        String projects = url + "/api/" + apiVersion + "/projects/"+id+"/";
         HashMap<String,String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Authorization","Token "+accessKey);
         HttpResponse<JsonNode> resp = Unirest.get(projects).
-                headers(headers).
-                queryString("application", id).asJson();
+                headers(headers).asJson();
         return resp;
     }
 
@@ -43,10 +43,9 @@ public class SDElementsLibrary {
         if(node.getStatus() != 200) {
             throw new SDLibraryException("Failed to retrieve project compliance level for project with id "+id, node);
         }
-        System.out.println(node.getBody());
-        JSONArray arr = node.getBody().getObject().getJSONArray("results");
-        if(arr != null && arr.length() > 0) {
-             if(arr.getJSONObject(0).getBoolean("risk_policy_compliant")) {
+        JSONObject obj = node.getBody().getObject();
+        if(obj != null) {
+             if(obj.getBoolean("risk_policy_compliant")) {
                  return RiskPolicyCompliance.PASS;
              } else {
                  return RiskPolicyCompliance.FAIL;
