@@ -7,6 +7,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -74,6 +75,13 @@ public class SDElements extends Recorder implements SimpleBuildStep {
                 SDElementsLibrary lib = new SDElementsLibrary(cred.getSecret().getPlainText(), conn.getConnectionString());
                 try {
                     riskIndicator = lib.getProjectCompliance(projectId);
+                    if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
+                        run.setResult(Result.FAILURE);
+                    } else {
+                        if(riskIndicator == RiskPolicyCompliance.FAIL) {
+                            run.setResult(Result.FAILURE);
+                        }
+                    }
                 } catch (UnirestException e) {
                     taskListener.getLogger().println("Fatal unrecoverable error while getting results from SDElements");
                     if (e.getCause() != null && e.getCause() instanceof UnknownHostException) {
@@ -82,8 +90,10 @@ public class SDElements extends Recorder implements SimpleBuildStep {
                     } else {
                         e.printStackTrace(taskListener.getLogger());
                     }
+                    run.setResult(Result.FAILURE);
                 } catch (SDLibraryException ex) {
                     taskListener.getLogger().println(ex.getMessage());
+                    run.setResult(Result.FAILURE);
                 }
             }
         } else {

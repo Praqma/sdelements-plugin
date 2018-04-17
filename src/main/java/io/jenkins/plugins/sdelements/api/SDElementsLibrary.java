@@ -33,8 +33,7 @@ public class SDElementsLibrary {
     /**
      *
      * @param id Project id on SDElements server
-     * @return RiskPolicyCompliance.PASS or RiskPolicyCompliance.FAIL. RiskPolicyCompliance.UNDETERMINED is never
-     *         returned as it is used as a failure state and a default value prior to check.
+     * @return RiskPolicyCompliance.PASS or RiskPolicyCompliance.FAIL. RiskPolicyCompliance.UNDETERMINED if project survey not completed
      * @throws UnirestException when our rest api decides to throw an error. Only seen happening when point to a non existing host
      * @throws SDLibraryException when we determine that we didn't get a correct result from SDElements. Empty result, or access denied
      */
@@ -45,6 +44,9 @@ public class SDElementsLibrary {
         }
         JSONObject obj = node.getBody().getObject();
         if(obj != null) {
+             if(obj.isNull("risk_policy_compliant")) {
+                return RiskPolicyCompliance.UNDETERMINED;
+             }
              if(obj.getBoolean("risk_policy_compliant")) {
                  return RiskPolicyCompliance.PASS;
              } else {
