@@ -21,7 +21,7 @@ public class SDElementsLibraryTest {
         Assume.assumeNotNull(token);
         expectedException.expect(SDLibraryException.class);
         expectedException.expectMessage("Invalid token in credentials");
-        SDElementsLibrary lib = new SDElementsLibrary(token, url);
+        SDElementsLibrary lib = new SDElementsLibrary("bosod857fj", url);
         RiskPolicyCompliance compliance = lib.getProjectCompliance(1743);
     }
 
@@ -29,9 +29,20 @@ public class SDElementsLibraryTest {
     public void testUnknownHost() throws Exception {
         Assume.assumeNotNull(token);
         expectedException.expect(SDLibraryException.class);
-        expectedException.expectMessage("Host not found: "+url);
-        SDElementsLibrary lib = new SDElementsLibrary(token, url);
+        String invalidHost = "https://bogus.site.somewhere.com";
+        expectedException.expectMessage("Host not found: "+invalidHost);
+        SDElementsLibrary lib = new SDElementsLibrary(token, invalidHost);
         RiskPolicyCompliance compliance = lib.getProjectCompliance(1743);
+    }
+
+    @Test
+    public void testWrongProjectId() throws Exception {
+        Assume.assumeNotNull(token);
+        expectedException.expect(SDLibraryException.class);
+        SDElementsLibrary lib = new SDElementsLibrary(token, url);
+        String idString = "Project with id "+2000+" Not found.";
+        expectedException.expectMessage(idString);
+        RiskPolicyCompliance compliance = lib.getProjectCompliance(2000);
     }
 
 }

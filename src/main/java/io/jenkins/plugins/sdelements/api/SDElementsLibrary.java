@@ -46,7 +46,7 @@ public class SDElementsLibrary {
      * @throws UnirestException when our rest api decides to throw an error. Only seen happening when point to a non existing host
      * @throws SDLibraryException when we determine that we didn't get a correct result from SDElements. Empty result, or access denied
      */
-    public RiskPolicyCompliance getProjectCompliance(int id) throws UnirestException, SDLibraryException {
+    public RiskPolicyCompliance getProjectCompliance(int id) throws SDLibraryException {
         HttpResponse<JsonNode> node = getProject(id);
         int status = node.getStatus();
         JsonNode body = node.getBody();

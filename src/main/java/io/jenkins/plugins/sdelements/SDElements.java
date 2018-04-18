@@ -18,6 +18,7 @@ import hudson.util.ListBoxModel;
 import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 import io.jenkins.plugins.sdelements.api.SDElementsLibrary;
 import io.jenkins.plugins.sdelements.api.SDLibraryException;
+import io.jenkins.plugins.sdelements.api.UnhandledSDLibraryException;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -34,6 +35,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by mads on 4/12/18.
@@ -42,6 +45,7 @@ public class SDElements extends Recorder implements SimpleBuildStep {
 
     private int projectId;
     private String connectionName;
+    private static Logger LOG = java.util.logging.Logger.getLogger(SDElements.class.getName());
 
     @DataBoundConstructor
     public SDElements(int projectId, String connectionName) {
@@ -82,14 +86,9 @@ public class SDElements extends Recorder implements SimpleBuildStep {
                             run.setResult(Result.FAILURE);
                         }
                     }
-                } catch (UnirestException e) {
-                    taskListener.getLogger().println("Fatal unrecoverable error while getting results from SDElements");
-                    if (e.getCause() != null && e.getCause() instanceof UnknownHostException) {
-                        taskListener.getLogger().println("The host " + conn.getConnectionString() + "could not be found");
-                        taskListener.getLogger().println(e.getMessage());
-                    } else {
-                        e.printStackTrace(taskListener.getLogger());
-                    }
+                } catch (UnhandledSDLibraryException unhandled) {
+                    taskListener.getLogger().println(unhandled.getMessage());
+                    LOG.log(Level.SEVERE, "Unhandled error caught", unhandled);
                     run.setResult(Result.FAILURE);
                 } catch (SDLibraryException ex) {
                     taskListener.getLogger().println(ex.getMessage());
