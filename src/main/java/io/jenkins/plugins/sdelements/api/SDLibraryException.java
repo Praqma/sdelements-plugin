@@ -14,8 +14,16 @@ public class SDLibraryException extends Exception {
         this.resp = resp;
     }
 
+    public SDLibraryException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     @Override
     public String getMessage() {
-        return String.format("%s%n%s",super.getMessage(), resp.getStatus() + " "+ resp.getStatusText());
+        if(resp != null) {
+            return String.format("%s%n%s", super.getMessage(), resp.getStatus() + " " + resp.getStatusText());
+        } else {
+            return super.getMessage();
+        }
     }
 }

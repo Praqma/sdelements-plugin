@@ -6,6 +6,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -20,13 +21,21 @@ public class SDElementsLibrary {
         this.url = Objects.requireNonNull(url, "url must not be null");
     }
 
-    private HttpResponse<JsonNode> getProject(int id) throws UnirestException {
+    private HttpResponse<JsonNode> getProject(int id) throws SDLibraryException {
         String projects = url + "/api/" + apiVersion + "/projects/"+id+"/";
         HashMap<String,String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Authorization","Token "+accessKey);
-        HttpResponse<JsonNode> resp = Unirest.get(projects).
-                headers(headers).asJson();
+        HttpResponse<JsonNode> resp = null;
+        try {
+            resp = Unirest.get(projects).
+                    headers(headers).asJson();
+        } catch (UnirestException e) {
+            if(e.getCause() instanceof UnknownHostException) {
+                throw new SDLibraryException("Host not found: "+url, e);
+            }
+            else throw new UnhandledSDLibraryException("Unknown error encountered", e);
+        }
         return resp;
     }
 
@@ -39,21 +48,26 @@ public class SDElementsLibrary {
      */
     public RiskPolicyCompliance getProjectCompliance(int id) throws UnirestException, SDLibraryException {
         HttpResponse<JsonNode> node = getProject(id);
-        if(node.getStatus() != 200) {
-            throw new SDLibraryException("Failed to retrieve project compliance level for project with id "+id, node);
-        }
-        JSONObject obj = node.getBody().getObject();
-        if(obj != null) {
-             if(obj.isNull("risk_policy_compliant")) {
-                return RiskPolicyCompliance.UNDETERMINED;
-             }
-             if(obj.getBoolean("risk_policy_compliant")) {
-                 return RiskPolicyCompliance.PASS;
-             } else {
-                 return RiskPolicyCompliance.FAIL;
-             }
+        int status = node.getStatus();
+        JsonNode body = node.getBody();
+        if(status == 404 && body != null && body.getObject().getString("detail").equals("Not found.")) {
+            throw new SDLibraryException("Project with id "+id+" Not found.", node);
+        } else if(status == 401 && body != null && body.getObject().getString("detail").equals("Invalid token.")) {
+            throw new SDLibraryException("Invalid token in credentials", node);
         } else {
-            throw new SDLibraryException("Unable to find project with id: "+id, node);
+            JSONObject obj = node.getBody().getObject();
+            if (obj != null) {
+                if (obj.isNull("risk_policy_compliant")) {
+                    return RiskPolicyCompliance.UNDETERMINED;
+                }
+                if (obj.getBoolean("risk_policy_compliant")) {
+                    return RiskPolicyCompliance.PASS;
+                } else {
+                    return RiskPolicyCompliance.FAIL;
+                }
+            } else {
+                throw new UnhandledSDLibraryException("Unknown response detected for project with id: " + id, node);
+            }
         }
     }
 
