@@ -15,8 +15,8 @@
         <jenkins.version>2.7.3</jenkins.version>
         <java.level>8</java.level>
     </properties>
-    <name>SDElements Plugin</name>
-    <description>Jenkins integration for Security Compass SDElements tool</description>
+    <name>SD Elements Plugin</name>
+    <description>Jenkins integration for SD Elements risk assessment from Security Compass</description>
     <licenses>
         <license>
             <name>MIT License</name>
