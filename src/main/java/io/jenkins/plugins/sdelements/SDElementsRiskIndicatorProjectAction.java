@@ -24,10 +24,7 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
 
     @Override
     public String getDisplayName() {
-        if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
-            return "SDElements: Not determined";
-        }
-        return "SDElements: "+(riskIndicator == RiskPolicyCompliance.PASS ? "PASS" : "FAIL");
+        return "SD Elements: "+riskIndicator;
     }
 
     @Override

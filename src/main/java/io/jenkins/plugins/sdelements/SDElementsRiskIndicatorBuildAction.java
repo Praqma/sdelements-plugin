@@ -38,7 +38,7 @@ public class SDElementsRiskIndicatorBuildAction implements Action, SimpleBuildSt
 
     @Override
     public String getDisplayName() {
-        return "SDElements";
+        return "SD Elements";
     }
 
     @Override
