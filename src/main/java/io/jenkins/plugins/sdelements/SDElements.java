@@ -2,7 +2,6 @@ package io.jenkins.plugins.sdelements;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -13,7 +12,6 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
 import hudson.util.ListBoxModel;
 import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 import io.jenkins.plugins.sdelements.api.SDElementsLibrary;
@@ -31,7 +29,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +38,7 @@ import java.util.logging.Logger;
 /**
  * Created by mads on 4/12/18.
  */
-public class SDElements extends Recorder implements SimpleBuildStep {
+public class SDElements extends Publisher implements SimpleBuildStep {
 
     private int projectId;
     private String connectionName;
@@ -61,6 +58,18 @@ public class SDElements extends Recorder implements SimpleBuildStep {
         return connectionName;
     }
 
+    private void setBuildResult(boolean markNonComplianceAsUnstable, RiskPolicyCompliance compliance, Run<?,?> run) {
+        if(compliance == RiskPolicyCompliance.FAIL && markNonComplianceAsUnstable) {
+            if(run != null) {
+                run.setResult(Result.UNSTABLE);
+            }
+        } else {
+            if(run != null && compliance != RiskPolicyCompliance.PASS) {
+                run.setResult(Result.FAILURE);
+            }
+        }
+    }
+
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
         SDElements.DescriptorImpl imp = null;
@@ -71,7 +80,7 @@ public class SDElements extends Recorder implements SimpleBuildStep {
         if(imp != null) {
             conn = imp.getByName(connectionName);
         }
-        RiskPolicyCompliance riskIndicator = RiskPolicyCompliance.UNDETERMINED;
+        RiskPolicyCompliance riskIndicator = null;
         if(conn != null) {
             String credId = conn.getCredentialsId();
             StringCredentials cred = CredentialsProvider.findCredentialById(credId, StringCredentials.class, run, Collections.<DomainRequirement>emptyList());
@@ -79,27 +88,21 @@ public class SDElements extends Recorder implements SimpleBuildStep {
                 SDElementsLibrary lib = new SDElementsLibrary(cred.getSecret().getPlainText(), conn.getConnectionString());
                 try {
                     riskIndicator = lib.getProjectCompliance(projectId);
-                    if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
-                        run.setResult(Result.FAILURE);
-                    } else {
-                        if(riskIndicator == RiskPolicyCompliance.FAIL) {
-                            run.setResult(Result.FAILURE);
-                        }
-                    }
                 } catch (UnhandledSDLibraryException unhandled) {
                     taskListener.getLogger().println(unhandled.getMessage());
                     LOG.log(Level.SEVERE, "Unhandled error caught", unhandled);
-                    run.setResult(Result.FAILURE);
                 } catch (SDLibraryException ex) {
                     taskListener.getLogger().println(ex.getMessage());
-                    run.setResult(Result.FAILURE);
+                    LOG.log(Level.WARNING, "Exception for SD Elements", ex);
                 }
             }
         } else {
             run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
             throw new IllegalStateException("Improper connection selected. This is a required setting");
         }
+        taskListener.getLogger().println("SD Elements compliance status: "+(riskIndicator == null ? "Undetermined" : riskIndicator));
         run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
+        setBuildResult(false, riskIndicator, run);
     }
 
     @Override

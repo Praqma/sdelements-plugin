@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:section title="Security Compass SDElements configuration">
+    <f:section title="Security Compass SD Elements configuration">
         <f:entry title="Connections">
             <f:repeatableHeteroProperty field="connections" hasHeader="true"/>
         </f:entry>

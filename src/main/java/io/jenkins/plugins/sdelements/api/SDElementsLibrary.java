@@ -51,7 +51,7 @@ public class SDElementsLibrary {
         int status = node.getStatus();
         JsonNode body = node.getBody();
         if(status == 404 && body != null && body.getObject().getString("detail").equals("Not found.")) {
-            throw new SDLibraryException("Project with id "+id+" Not found.", node);
+            throw new SDLibraryException("Project with id "+id+" Not found", node);
         } else if(status == 401 && body != null && body.getObject().getString("detail").equals("Invalid token.")) {
             throw new SDLibraryException("Invalid token in credentials", node);
         } else {

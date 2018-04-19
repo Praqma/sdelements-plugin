@@ -16,7 +16,8 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
 
     @Override
     public String getIconFileName() {
-        if(riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
+        System.out.println(riskIndicator);
+        if(riskIndicator == null || riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
             return "/plugin/sdelements/icons/none.png";
         }
         return riskIndicator == RiskPolicyCompliance.PASS ? "/plugin/sdelements/icons/pass.png" : "/plugin/sdelements/icons/fail.png";
@@ -24,7 +25,7 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
 
     @Override
     public String getDisplayName() {
-        return "SD Elements: "+riskIndicator;
+        return "SD Elements: "+(riskIndicator == null ? "Undetermined" : riskIndicator);
     }
 
     @Override
@@ -39,4 +40,5 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
     public void setRiskIndicator(RiskPolicyCompliance riskIndicator) {
         this.riskIndicator = riskIndicator;
     }
+
 }
