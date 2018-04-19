@@ -1,11 +1,9 @@
-package io.jenkins.plugins.sdelements.api;
+package io.jenkins.plugins.sdelements;
 
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
-import io.jenkins.plugins.sdelements.SDElementsRiskIndicatorBuildAction;
-import io.jenkins.plugins.sdelements.SDElementsRiskIndicatorProjectAction;
 import jenkins.model.TransientActionFactory;
 
 import javax.annotation.Nonnull;
@@ -27,7 +25,7 @@ public class SDElementsActionFactory extends TransientActionFactory<Job> {
     public Collection<? extends Action> createFor(@Nonnull Job job) {
         Run<?,?> r = job.getLastCompletedBuild();
         SDElementsRiskIndicatorBuildAction sdba = r.getAction(SDElementsRiskIndicatorBuildAction.class);
-        SDElementsRiskIndicatorProjectAction sdpa = new SDElementsRiskIndicatorProjectAction(sdba.getRiskIndicator());
+        SDElementsRiskIndicatorProjectAction sdpa = new SDElementsRiskIndicatorProjectAction(sdba.getRiskIndicator(), sdba.getProjectUrl());
         return Collections.singleton(sdpa);
     }
 }

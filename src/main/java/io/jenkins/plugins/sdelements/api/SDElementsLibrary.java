@@ -39,6 +39,14 @@ public class SDElementsLibrary {
         return resp;
     }
 
+    public String getProjectUrl(int id) throws SDLibraryException {
+        HttpResponse<JsonNode> node = getProject(id);
+        if(node.getStatus() == 200) {
+            return node.getBody().getObject().getString("url");
+        }
+        return null;
+    }
+
     /**
      *
      * @param id Project id on SDElements server

@@ -82,6 +82,7 @@ public class SDElements extends Publisher implements SimpleBuildStep {
             conn = imp.getByName(connectionName);
         }
         RiskPolicyCompliance riskIndicator = null;
+        String url = null;
         if(conn != null) {
             String credId = conn.getCredentialsId();
             StringCredentials cred = CredentialsProvider.findCredentialById(credId, StringCredentials.class, run, Collections.<DomainRequirement>emptyList());
@@ -89,6 +90,7 @@ public class SDElements extends Publisher implements SimpleBuildStep {
                 SDElementsLibrary lib = new SDElementsLibrary(cred.getSecret().getPlainText(), conn.getConnectionString());
                 try {
                     riskIndicator = lib.getProjectCompliance(projectId);
+                    url = lib.getProjectUrl(projectId);
                 } catch (UnhandledSDLibraryException unhandled) {
                     taskListener.getLogger().println(unhandled.getMessage());
                     LOG.log(Level.SEVERE, "Unhandled error caught", unhandled);
@@ -98,11 +100,11 @@ public class SDElements extends Publisher implements SimpleBuildStep {
                 }
             }
         } else {
-            run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
+            run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url));
             throw new IllegalStateException("Improper connection selected. This is a required setting");
         }
         taskListener.getLogger().println("SD Elements compliance status: "+(riskIndicator == null ? "Undetermined" : riskIndicator));
-        run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
+        run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url));
         setBuildResult(markUnstable, riskIndicator, run);
     }
 

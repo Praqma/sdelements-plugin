@@ -9,9 +9,11 @@ import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 public class SDElementsRiskIndicatorBuildAction implements Action  {
 
     private RiskPolicyCompliance riskIndicator;
+    private String projectUrl;
 
-    public SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance riskIndicator) {
+    public SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance riskIndicator, String projectUrl) {
         this.riskIndicator = riskIndicator;
+        this.projectUrl = projectUrl;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class SDElementsRiskIndicatorBuildAction implements Action  {
 
     @Override
     public String getUrlName() {
-        return null;
+        return projectUrl;
     }
 
     public RiskPolicyCompliance getRiskIndicator() {
@@ -40,4 +42,11 @@ public class SDElementsRiskIndicatorBuildAction implements Action  {
         this.riskIndicator = riskIndicator;
     }
 
+    public String getProjectUrl() {
+        return projectUrl;
+    }
+
+    public void setProjectUrl(String projectUrl) {
+        this.projectUrl = projectUrl;
+    }
 }

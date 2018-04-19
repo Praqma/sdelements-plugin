@@ -9,14 +9,15 @@ import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAction {
 
     private RiskPolicyCompliance riskIndicator;
+    private String projectUrl;
 
-    public SDElementsRiskIndicatorProjectAction(RiskPolicyCompliance riskIndicator) {
+    public SDElementsRiskIndicatorProjectAction(RiskPolicyCompliance riskIndicator, String projectUrl) {
         this.riskIndicator = riskIndicator;
+        this.projectUrl = projectUrl;
     }
 
     @Override
     public String getIconFileName() {
-        System.out.println(riskIndicator);
         if(riskIndicator == null || riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
             return "/plugin/sdelements/icons/none.png";
         }
@@ -30,7 +31,7 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
 
     @Override
     public String getUrlName() {
-        return null;
+        return projectUrl;
     }
 
     public RiskPolicyCompliance getRiskIndicator() {
@@ -41,4 +42,11 @@ public class SDElementsRiskIndicatorProjectAction implements ProminentProjectAct
         this.riskIndicator = riskIndicator;
     }
 
+    public String getProjectUrl() {
+        return projectUrl;
+    }
+
+    public void setProjectUrl(String projectUrl) {
+        this.projectUrl = projectUrl;
+    }
 }
