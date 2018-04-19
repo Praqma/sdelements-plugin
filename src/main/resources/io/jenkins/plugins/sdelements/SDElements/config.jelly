@@ -6,4 +6,7 @@
     <f:entry field="connectionName" title="Select connection to use">
         <f:select/>
     </f:entry>
+    <f:entry field="markUnstable" title="Mark non compliance as unstable">
+        <f:checkbox/>
+    </f:entry>
 </j:jelly>

@@ -42,6 +42,7 @@ public class SDElements extends Publisher implements SimpleBuildStep {
 
     private int projectId;
     private String connectionName;
+    private boolean markUnstable;
     private static Logger LOG = java.util.logging.Logger.getLogger(SDElements.class.getName());
 
     @DataBoundConstructor
@@ -102,12 +103,21 @@ public class SDElements extends Publisher implements SimpleBuildStep {
         }
         taskListener.getLogger().println("SD Elements compliance status: "+(riskIndicator == null ? "Undetermined" : riskIndicator));
         run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator));
-        setBuildResult(false, riskIndicator, run);
+        setBuildResult(markUnstable, riskIndicator, run);
     }
 
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
+    }
+
+    public boolean isMarkUnstable() {
+        return markUnstable;
+    }
+
+    @DataBoundSetter
+    public void setMarkUnstable(boolean markUnstable) {
+        this.markUnstable = markUnstable;
     }
 
     @Symbol("sdelements")
