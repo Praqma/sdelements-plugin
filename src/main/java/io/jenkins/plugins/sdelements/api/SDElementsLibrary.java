@@ -43,7 +43,7 @@ public class SDElementsLibrary {
      *
      * @param id Project id on SDElements server
      * @return RiskPolicyCompliance.PASS or RiskPolicyCompliance.FAIL. RiskPolicyCompliance.UNDETERMINED if project survey not completed
-     * @throws {@link SDLibraryException} when we determine that we didn't get a correct result from SDElements. Empty result, or access denied
+     * @throws SDLibraryException when we determine that we didn't get a correct result from SDElements. Empty result, or access denied
      */
     public RiskPolicyCompliance getProjectCompliance(int id) throws SDLibraryException {
         HttpResponse<JsonNode> node = getProject(id);
