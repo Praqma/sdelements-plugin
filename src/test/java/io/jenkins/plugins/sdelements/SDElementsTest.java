@@ -2,13 +2,11 @@ package io.jenkins.plugins.sdelements;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
-import hudson.model.Cause;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.model.Run;
+import hudson.model.*;
 import hudson.util.Secret;
 import io.jenkins.plugins.sdelements.api.RiskPolicyCompliance;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,7 +68,9 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject freeStyleProject = createProject("valid-connection", 1742);
-        jr.buildAndAssertSuccess(freeStyleProject);
+        FreeStyleBuild fsb = freeStyleProject.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.SUCCESS, fsb);
+        jr.assertLogContains("SD Elements compliance status: Pass", fsb);
     }
 
     @Test
@@ -78,7 +78,9 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject fsp = createProject("valid-connection", 1739);
-        jr.assertBuildStatus(Result.FAILURE, fsp.scheduleBuild2(0, new Cause.UserIdCause()));
+        FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.FAILURE, fsb);
+        jr.assertLogContains("SD Elements compliance status: Fail", fsb);
     }
 
     @Test
@@ -86,7 +88,9 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject fsp = createProject("valid-connection", 1743);
-        jr.assertBuildStatus(Result.FAILURE, fsp.scheduleBuild2(0, new Cause.UserIdCause()));
+        FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.FAILURE, fsb);
+        jr.assertLogContains("SD Elements compliance status: Survey not completed", fsb);
     }
 
     @Test
@@ -94,7 +98,10 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject fsp = createProject("wrong-connection", 1742);
-        jr.assertBuildStatus(Result.FAILURE, fsp.scheduleBuild2(0, new Cause.UserIdCause()));
+        //Host not found
+        FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.FAILURE, fsb);
+        jr.assertLogContains("Host not found", fsb);
     }
 
     @Test
@@ -102,7 +109,9 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject fsp = createProject("valid-connection", 9999);
-        jr.assertBuildStatus(Result.FAILURE, fsp.scheduleBuild2(0, new Cause.UserIdCause()));
+        FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.FAILURE, fsb);
+        jr.assertLogContains("Project with id 9999 Not found", fsb);
     }
 
     @Test
@@ -110,6 +119,8 @@ public class SDElementsTest {
         Assume.assumeNotNull(token);
         Assume.assumeNotNull(url);
         FreeStyleProject fsp = createProject("invalid-connection", 1742);
-        jr.assertBuildStatus(Result.FAILURE, fsp.scheduleBuild2(0, new Cause.UserIdCause()));
+        FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
+        jr.assertBuildStatus(Result.FAILURE, fsb);
+        jr.assertLogContains("Invalid token in credentials", fsb);
     }
 }

@@ -40,7 +40,7 @@ public class SDElementsLibraryTest {
         Assume.assumeNotNull(token);
         expectedException.expect(SDLibraryException.class);
         SDElementsLibrary lib = new SDElementsLibrary(token, url);
-        String idString = "Project with id "+2000+" Not found.";
+        String idString = "Project with id "+2000+" Not found";
         expectedException.expectMessage(idString);
         RiskPolicyCompliance compliance = lib.getProjectCompliance(2000);
     }
