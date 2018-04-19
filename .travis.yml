@@ -1,0 +1,17 @@
+language: java
+jdk:
+- oraclejdk8
+install: true
+cache:
+  directories:
+  - "$HOME/.m2"
+script:
+- mvn package |  egrep -v 'Download(ing|ed)'
+deploy:
+  provider: releases
+  api_key:
+    secure: SEFzWVEG6H9Zcu7wOzYueGfhAisGiF7o/cMocTdYvGG1z4WwIUtHb1AfKmxbyWna72kybHtdBjnMAJ8l7gwp7UOPpHKsIkBKQ5SXa3S/2Fqj7Aq2UFioeqklqDpOlYSobUyp9epUTJnTwFTUFN4hYKxQG2ZL89xTNk3+5UxRsyH9KbL/4c6Gs8WRpmLKn0h1EHSGHwOWRlGQpcqaklLyaC2LPg4SZD1PmVCalfdoLWg3JQR2jjJvgLGvpSrmni7kszq+yNgFJbwmYDd2Vq4+d2LGo9t62zMi0cAypNl6plBTT1yb2R1298mSd0BwnTbafJDaB2eJ4u443vonfPEc8WRb9Xtnas4XCzrU8RJld3UyamRQn/hnK6dUn71SQ3b0cFPM8HessCGytBkkJe3GSVLSTeea9JJRZfFOgRo2zii/VRY44o0oCCC0IMj9vnZDOG3/bQqB/87o8T0no7fTOniolF7ba4xwz2hqwhBYevVVeBZxV8/R3Lop/5kRm58XP5K/vf4l9Nbx6/v/Vhs2lVUa3cxguoOVMZJtE33QZSRWLp8BvbaJNEwCAODuGRU8Nm17ZZEbsuwpHp6OqfYty3RS04qNkG/Cyw/bXrpy0/JQjwKFnl3NI4DhaileK59KkcZTepYv5fW/7mijr70a5aFj3TJE9Q9OWXe/kNBMNiE=
+  file: target/sdelements.hpi
+  skip_cleanup: true
+  on:
+    tags: true
