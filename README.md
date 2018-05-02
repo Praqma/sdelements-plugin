@@ -25,17 +25,17 @@ Remember, when doing manual install plugin dependencies are **NOT** installed, s
 
 ### Configuring credentials
 
-The plugin only supports the usage of credentials using a generated token. You need to generate a token in SD Elements that can read the status of projects. You do that by clicking `<your name>` in the upper right corner, and the `api` and then you generate your token by clicking the `Generate` button. 
+The plugin only supports the usage of credentials using a generated token. You need to generate a token in SD Elements for your user that can read the status of projects. You do that by clicking `<your name>` in the upper right corner, and the `api` and then you generate your token by clicking the `Generate` button. 
 
 Once you've created your SD Elements token you need to create an instance of your SD Elements server configuration in Jenkins: 
 
-`Manage Jenkins` -> `Configure system` - `Security Compass SD Elements configuration` 
+`Manage Jenkins` -> `Configure system` -> `Security Compass SD Elements configuration` 
 
 Fill in a chosen name for the connection, server address and add a credential to use. For this you need to use the `Secret text` where you put in your generated api token. 
 
 ### Finding your project id
 
-In order to obtain your project id you need to log into SD Elements using a browser first, with your username and password. 
+In order to obtain your project id for use in a job, you need to log into SD Elements using a browser first. Use your username and password. 
 
 Then browse this address (same browser window): `<your_sd_elememts_server>/api/v2/projects/`. This gives you a json response. Inside the response you'll find a number of entries like: `"id":`. These are the project id's you need. The name of the project is in the following `"slug"` element.
 
