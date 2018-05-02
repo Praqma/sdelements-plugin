@@ -100,11 +100,11 @@ public class SDElements extends Publisher implements SimpleBuildStep {
                 }
             }
         } else {
-            run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url));
+            run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url, null));
             throw new IllegalStateException("Improper connection selected. This is a required setting");
         }
         taskListener.getLogger().println("SD Elements compliance status: "+(riskIndicator == null ? "Undetermined" : riskIndicator));
-        run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url));
+        run.addAction(new SDElementsRiskIndicatorBuildAction(riskIndicator, url, conn.getConnectionString()));
         setBuildResult(markUnstable, riskIndicator, run);
     }
 

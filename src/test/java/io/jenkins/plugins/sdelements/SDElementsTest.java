@@ -59,7 +59,7 @@ public class SDElementsTest {
     public void testActionCanBeSaved() throws Exception {
         FreeStyleProject fp = jr.createFreeStyleProject();
         Run r = jr.buildAndAssertSuccess(fp);
-        r.addAction(new SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance.FAIL));
+        r.addAction(new SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance.FAIL,"something", "something"));
         r.save();
         //This test is pass if no error is thrown.
     }

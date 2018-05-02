@@ -10,18 +10,17 @@ public class SDElementsRiskIndicatorBuildAction implements Action  {
 
     private RiskPolicyCompliance riskIndicator;
     private String projectUrl;
+    private String baseUrl;
 
-    public SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance riskIndicator, String projectUrl) {
+    public SDElementsRiskIndicatorBuildAction(RiskPolicyCompliance riskIndicator, String projectUrl, String baseUrl) {
         this.riskIndicator = riskIndicator;
         this.projectUrl = projectUrl;
+        this.baseUrl = baseUrl;
     }
 
     @Override
     public String getIconFileName() {
-        if(riskIndicator == null || riskIndicator == RiskPolicyCompliance.UNDETERMINED) {
-            return "/plugin/sdelements/icons/none.png";
-        }
-        return riskIndicator == RiskPolicyCompliance.PASS ? "/plugin/sdelements/icons/pass.png" : "/plugin/sdelements/icons/fail.png";
+        return "/plugin/sdelements/icons/sdelements_icon.png";
     }
 
     @Override
@@ -31,7 +30,7 @@ public class SDElementsRiskIndicatorBuildAction implements Action  {
 
     @Override
     public String getUrlName() {
-        return projectUrl;
+        return baseUrl;
     }
 
     public RiskPolicyCompliance getRiskIndicator() {
@@ -48,5 +47,23 @@ public class SDElementsRiskIndicatorBuildAction implements Action  {
 
     public void setProjectUrl(String projectUrl) {
         this.projectUrl = projectUrl;
+    }
+
+    public String getStatusIcon(RiskPolicyCompliance risk) {
+        if(risk == RiskPolicyCompliance.FAIL) {
+            return "/plugin/sdelements/icons/fail.png";
+        } else if(risk == RiskPolicyCompliance.PASS) {
+            return "/plugin/sdelements/icons/pass.png";
+        } else {
+            return "/plugin/sdelements/icons/none.png";
+        }
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }

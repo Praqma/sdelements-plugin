@@ -25,7 +25,7 @@ public class SDElementsActionFactory extends TransientActionFactory<Job> {
     public Collection<? extends Action> createFor(@Nonnull Job job) {
         Run<?,?> r = job.getLastCompletedBuild();
         SDElementsRiskIndicatorBuildAction sdba = r.getAction(SDElementsRiskIndicatorBuildAction.class);
-        SDElementsRiskIndicatorProjectAction sdpa = new SDElementsRiskIndicatorProjectAction(sdba.getRiskIndicator(), sdba.getProjectUrl());
+        SDElementsRiskIndicatorProjectAction sdpa = new SDElementsRiskIndicatorProjectAction(sdba.getRiskIndicator(), sdba.getProjectUrl(), sdba.getBaseUrl());
         return Collections.singleton(sdpa);
     }
 }
