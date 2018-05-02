@@ -148,6 +148,12 @@ public class SDElements extends Publisher implements SimpleBuildStep {
             return true;
         }
 
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return "SD Elements";
+        }
+
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
