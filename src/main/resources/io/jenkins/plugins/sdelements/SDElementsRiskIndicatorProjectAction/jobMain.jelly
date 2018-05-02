@@ -3,7 +3,7 @@
     <table style="margin-top: 1em; margin-left:1em;">
         <t:summary icon="/plugin/sdelements/icons/sdelements_icon.png">
             <div style="margin-left:-1em;">
-                <p><a href="${it.projectUrl}">Elements Risk Status</a></p>
+                <p><a href="${it.projectUrl}">SD Elements Risk Status</a></p>
                 <j:choose>
                     <j:when test="${it.riskIndicator != null}">
                         <p><img style="width:20px" src="${resURL}/${it.getStatusIcon(it.riskIndicator)}"/> Risk status: ${it.riskIndicator}</p>
