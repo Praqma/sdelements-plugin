@@ -46,7 +46,7 @@ public class SDElementsConnection extends AbstractDescribableImpl<SDElementsConn
 
     @Extension
     public static class DescriptorImpl extends Descriptor<SDElementsConnection> {
-        public String getDisplayName() { return "SDElements connection"; }
+        public String getDisplayName() { return "SD Elements connection"; }
 
         public ListBoxModel doFillCredentialsIdItems(final @AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel lbm = new StandardListBoxModel();

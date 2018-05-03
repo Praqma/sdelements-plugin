@@ -71,7 +71,7 @@ public class SDElementsTest {
         FreeStyleProject freeStyleProject = createProject("valid-connection", 1742, false);
         FreeStyleBuild fsb = freeStyleProject.scheduleBuild2(0, new Cause.UserIdCause()).get();
         jr.assertBuildStatus(Result.SUCCESS, fsb);
-        jr.assertLogContains("SD Elements compliance status: Pass", fsb);
+        jr.assertLogContains("SD Elements risk status: Pass", fsb);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class SDElementsTest {
         FreeStyleProject fsp = createProject("valid-connection", 1739, false);
         FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
         jr.assertBuildStatus(Result.FAILURE, fsb);
-        jr.assertLogContains("SD Elements compliance status: Fail", fsb);
+        jr.assertLogContains("SD Elements risk status: Fail", fsb);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class SDElementsTest {
         FreeStyleProject fsp = createProject("valid-connection", 1739, true);
         FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
         jr.assertBuildStatus(Result.UNSTABLE, fsb);
-        jr.assertLogContains("SD Elements compliance status: Fail", fsb);
+        jr.assertLogContains("SD Elements risk status: Fail", fsb);
     }
 
 
@@ -102,7 +102,7 @@ public class SDElementsTest {
         FreeStyleProject fsp = createProject("valid-connection", 1743, false);
         FreeStyleBuild fsb = fsp.scheduleBuild2(0, new Cause.UserIdCause()).get();
         jr.assertBuildStatus(Result.FAILURE, fsb);
-        jr.assertLogContains("SD Elements compliance status: Survey not completed", fsb);
+        jr.assertLogContains("SD Elements risk status: Survey not completed", fsb);
     }
 
     @Test
