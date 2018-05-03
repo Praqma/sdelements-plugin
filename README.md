@@ -109,6 +109,24 @@ Build pages shows historic results for each builds, but the graphics are the sam
 
 # Developer information
 
+## Testing
+
+There are functional tests to run executing most relevant use-cases and some fail-cases.
+
+To run them you need access to a running SD Elements service, and you must pass your API token and server URL to the test execution.
+
+Currently project ID's are hard-coded, you need to replace them, see [#29](https://github.com/Praqma/sdelements-plugin/issues/29).
+
+## SD Elements API package
+
+The integration and communication with the SD Elements service is wrapped in a separate package `io.jenkins.plugins.sdelements.api` to allow it to be extracted as a separate library and reused for developing integration for other CI server if needed.
+
+Design objectives:
+
+* `io.jenkins.plugins.sdelements.api` shouldn't contain any Jenkins or CI specifics
+* it should wrap communication with the service, as well a interpret the results to hand over simple status to the CI part
+* the CI server should handle the simple interpretation of the result to set build status accordingly, and should rely on error messages and status, text and wording passed from the API
+
 ## GitHub Travis setup
 
 ### Releases
