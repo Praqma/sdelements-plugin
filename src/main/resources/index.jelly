@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Jenkins integration for Security Compass SDElements tool
+    Jenkins integration for Security Compass SD Elements tool
 </div>
