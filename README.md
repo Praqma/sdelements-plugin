@@ -7,8 +7,6 @@ Jenkins integration for [SD Elements risk assessment](https://www.securitycompas
 
 Add a post-build action to pass/fail your job, based on the status of the risk assessment.
 
-Development is in progress - no public release yet.
-
 Developed by Praqma, funded by Security Compass
 
 ## Features
