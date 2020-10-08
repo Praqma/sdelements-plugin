@@ -34,7 +34,7 @@ public class SDElementsLibrary {
             if(e.getCause() instanceof UnknownHostException) {
                 throw new SDLibraryException("Host not found: "+url, e);
             }
-            else throw new UnhandledSDLibraryException("Unknown error encountered", e);
+            throw new UnhandledSDLibraryException("Unknown exception encountered. Response:\n"+resp.getBody(), e);
         }
         return resp;
     }
