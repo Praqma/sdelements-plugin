@@ -94,8 +94,6 @@ public class SDElements extends Publisher implements SimpleBuildStep {
                 } catch (UnhandledSDLibraryException unhandled) {
                     taskListener.getLogger().println(unhandled.getMessage());
                     LOG.log(Level.SEVERE, "Unhandled error caught", unhandled);
-                    LOG.log(Level.INFO, unhandled.getMessage());
-                    LOG.log(Level.INFO, unhandled.getCause().getMessage());
                 } catch (SDLibraryException ex) {
                     taskListener.getLogger().println(ex.getMessage());
                     LOG.log(Level.WARNING, "Exception for SD Elements", ex);
