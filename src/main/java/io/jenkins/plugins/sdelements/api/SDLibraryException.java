@@ -18,6 +18,10 @@ public class SDLibraryException extends Exception {
         super(message, cause);
     }
 
+    public SDLibraryException(String message) {
+        super(message);
+    }
+
     @Override
     public String getMessage() {
         if(resp != null) {

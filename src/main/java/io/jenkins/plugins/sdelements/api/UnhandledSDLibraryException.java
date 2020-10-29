@@ -14,4 +14,8 @@ public class UnhandledSDLibraryException extends SDLibraryException {
     public UnhandledSDLibraryException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public UnhandledSDLibraryException(String message) {
+        super(message);
+    }
 }
